@@ -50,60 +50,77 @@ class FunWithGcm {
     return out.array();
   }
 
-  public static boolean trent(byte ciphertext[], byte key[]) {
+  public static boolean trent(byte ciphertext[], byte key[]) throws Exception {
     byte message[];
+    System.in.read();
     System.out.println("Trent: I've received the encrypted message \"" + encode(Arrays.copyOf(ciphertext, 4)) + "...\" from Alice,");
-    System.out.println("       and the key \"" + encode(Arrays.copyOf(key, 4)) + "...\"");
+    System.out.print("       and the key \"" + encode(Arrays.copyOf(key, 4)) + "...\"");
+    System.in.read();
     try {
-      System.out.println("Trent: I will decrypt this and scan for evil messages.");
+      System.out.print("Trent: I will decrypt this and scan for evil messages.");
       message = decrypt(ciphertext, key);
+      System.in.read();
     } catch (Exception e) {  // Message did not decrypt.
-      System.out.println("  Decryption failed!");
-      System.out.println("Trent: Gotcha, evildoer: Invalid ciphertext!");
+      System.out.print("  Decryption failed!");
+      System.in.read();
+      System.out.print("Trent: Gotcha, evildoer: Invalid ciphertext!");
       return false;
     }
     System.out.println("  Decryption successful.");
-    System.out.println("  Message is \"" + encode(message) + "\".");
+    System.out.print("  Message is \"" + encode(message) + "\".");
+    System.in.read();
     if (message[0] == 0x13 && message[1] == 0x37) {
-      System.out.println("  Evil Message!");
-      System.out.println("Trent: Gotcha, evildoer: Evil message!");
+      System.out.print("  Evil Message!");
+      System.in.read();
+      System.out.print("Trent: Gotcha, evildoer: Evil message!");
       return false;
     }
-    System.out.println("Trent: Everything is perfect, no evil detected!");
+    System.out.print("Trent: Everything is perfect, no evil detected!");
     return true;
   }
 
-  public static void bob(byte ciphertext[], byte key[]) {
+  public static void bob(byte ciphertext[], byte key[]) throws Exception {
     byte message[];
+    System.in.read();
     System.out.println("Bob: I've received the encrypted message \"" + encode(Arrays.copyOf(ciphertext, 4)) + "...\" from Trent, he says it's okay,");
-    System.out.println("     and Alice gave me the key \"" + encode(Arrays.copyOf(key, 4)) + "...\"");
+    System.out.print("     and Alice gave me the key \"" + encode(Arrays.copyOf(key, 4)) + "...\"");
+    System.in.read();
     try {
-      System.out.println("Bob: Let's try to decrypt this.");
+      System.out.print("Bob: Let's try to decrypt this.");
+      System.in.read();
       message = decrypt(ciphertext, key);
     } catch (Exception e) {  // Decryption failed.
-      System.out.println("  Decryption failed!");
-      System.out.println("Bob: Yeah, that doesn't work?");
-      System.out.println("Bob could not decrypt the message, Bob wins!");
+      System.out.print("  Decryption failed!");
+      System.in.read();
+      System.out.print("Bob: Yeah, that doesn't work?");
+      System.in.read();
+      System.out.print("Bob could not decrypt the message, Bob wins!");
       return;
     }
     System.out.println("  Decryption successful.");
-    System.out.println("  Message is \"" + encode(message) + "\".");
+    System.out.print("  Message is \"" + encode(message) + "\".");
+    System.in.read();
     if (message[0] == 0x13 && message[1] == 0x37) {
-      System.out.println("  Evil Message!");
-      System.out.println("Bob: OH NO!");
-      System.out.println("Alice managed to sneak an evil message to Bob, Alice wins!");
+      System.out.print("  Evil Message!");
+      System.in.read();
+      System.out.print("Bob: OH NO!");
+      System.in.read();
+      System.out.print("Alice managed to sneak an evil message to Bob, Alice wins!");
       return;
     }
-    System.out.println("Bob: Interesting message!");
-    System.out.println("Bob got a good message, Bob wins!");
+    System.out.print("Bob: Interesting message!");
+    System.in.read();
+    System.out.print("Bob got a good message, Bob wins!");
   }
 
-  public static void aliceOutput(byte ciphertext[], byte keyForTrent[], byte keyForBob[]) {
+  public static void aliceOutput(byte ciphertext[], byte keyForTrent[], byte keyForBob[]) throws Exception {
     if (trent(ciphertext, keyForTrent)) {
       bob(ciphertext, keyForBob);
     } else {
-      System.out.println("Trent cannot guarantee that the message is good, Bob wins!");
+      System.in.read();
+      System.out.print("Trent cannot guarantee that the message is good, Bob wins!");
     }
+    System.in.read();
   }
 
   public static byte[] gctr(byte message[], byte iv[], byte key[]) throws Exception {
@@ -296,17 +313,17 @@ class FunWithGcm {
     byte ciphertext[] = encrypt(message, key);
     System.out.println("---------------------------------------------------------------------------");
     System.out.println("Scenario 1: good message, Bob and Trent get the correct key.");
-    System.out.println("---------------------------------------------------------------------------");
+    System.out.print("---------------------------------------------------------------------------");
     aliceOutput(ciphertext, key, key);
     System.out.println();
     System.out.println("---------------------------------------------------------------------------");
     System.out.println("Scenario 2: good message, Trent gets the correct key, Bob gets a wrong key.");
-    System.out.println("---------------------------------------------------------------------------");
+    System.out.print("---------------------------------------------------------------------------");
     aliceOutput(ciphertext, key, key2);
     System.out.println();
     System.out.println("---------------------------------------------------------------------------");
     System.out.println("Scenario 3: good message, Trent gets a wrong key, Bob gets the correct key.");
-    System.out.println("---------------------------------------------------------------------------");
+    System.out.print("---------------------------------------------------------------------------");
     aliceOutput(ciphertext, key2, key);
     message[0] = 0x13;
     message[1] = 0x37;
@@ -314,7 +331,7 @@ class FunWithGcm {
     System.out.println();
     System.out.println("---------------------------------------------------------------------------");
     System.out.println("Scenario 4: evil message, Bob and Trent get the correct key.");
-    System.out.println("---------------------------------------------------------------------------");
+    System.out.print("---------------------------------------------------------------------------");
     aliceOutput(ciphertext, key, key);
 
     byte message1[] = new byte[16];
@@ -354,7 +371,7 @@ class FunWithGcm {
     System.out.println("---------------------------------------------------------------------------");
     System.out.println("Scenario 5: Trent gets a good message with the correct key,");
     System.out.println("            Bob gets an evil message with the correct key.");
-    System.out.println("---------------------------------------------------------------------------");
+    System.out.print("---------------------------------------------------------------------------");
     aliceOutput(ciphertext, key2, key);
   }
 }
