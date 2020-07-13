@@ -1,5 +1,11 @@
 # Compiled class file
 *.class
+*.o
+*.so
+
+# third_party directory
+build
+third_party/
 
 # Log file
 *.log
